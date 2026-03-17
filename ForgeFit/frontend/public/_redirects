@@ -1,5 +1,0 @@
-# Cloudflare Pages — SPA routing
-# All requests to /app/* serve /app/index.html
-/app/*    /app/index.html    200
-# Root serves index.html
-/*        /index.html        200
