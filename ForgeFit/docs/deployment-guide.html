@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ForgeFit — Deployment Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;--sur:#111;--card:#161616;--bdr:#252525;
+  --red:#e8002d;--rdim:rgba(232,0,45,.1);
+  --grn:#22c55e;--gdim:rgba(34,197,94,.08);
+  --amb:#f59e0b;--adim:rgba(245,158,11,.08);
+  --blu:#3b9eff;--bdim:rgba(59,158,255,.08);
+  --txt:#ebebeb;--mut:#777;--dim:#333;
+  --fd:'Barlow Condensed',sans-serif;
+  --fb:'Barlow',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --sb:260px;
+  --cw:740px;
+}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{font-family:var(--fb);color:var(--txt);font-size:15px;line-height:1.7}
+
+/* Layout */
+.layout{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sb);flex-shrink:0;position:fixed;top:0;left:0;height:100vh;
+  background:var(--sur);border-right:1px solid var(--bdr);
+  overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--dim) transparent;
+}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--dim)}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--bdr);
+  font-family:var(--fd);font-size:21px;font-weight:900;letter-spacing:-.5px;text-transform:uppercase}
+.sb-head span{color:var(--red)}
+.sb-head small{display:block;font-size:9px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--mut);margin-top:3px}
+.sb-grp{padding:13px 18px 2px;font-family:var(--fd);font-size:9px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:var(--dim)}
+.sb-a{display:flex;align-items:center;gap:8px;padding:7px 18px;text-decoration:none;
+  color:var(--mut);font-size:13px;border-left:2px solid transparent;transition:all .12s}
+.sb-a:hover{color:var(--txt);background:rgba(255,255,255,.02);border-left-color:var(--dim)}
+.sb-a.on{color:var(--red);border-left-color:var(--red);background:var(--rdim)}
+.sb-a .n{font-family:var(--fd);font-size:10px;font-weight:700;background:var(--dim);
+  color:var(--mut);padding:1px 5px;border-radius:2px;min-width:20px;text-align:center;flex-shrink:0}
+.sb-a.on .n{background:var(--red);color:#fff}
+
+/* Content */
+.content{margin-left:var(--sb);padding:48px 40px 100px}
+.ci{max-width:var(--cw);width:100%}
+@media(max-width:900px){.sidebar{display:none}.content{margin-left:0;padding:28px 18px 80px}}
+
+/* Hero */
+.hero{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;
+  padding:32px 28px;margin-bottom:40px;position:relative;overflow:hidden}
+.hero::after{content:'DOCS';position:absolute;right:-8px;top:-8px;
+  font-family:var(--fd);font-size:130px;font-weight:900;
+  color:rgba(232,0,45,.03);pointer-events:none;line-height:1}
+.h-tag{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.hero h1{font-family:var(--fd);font-size:clamp(28px,4.5vw,48px);font-weight:900;
+  letter-spacing:-1px;text-transform:uppercase;line-height:.9;margin-bottom:12px}
+.hero h1 em{color:var(--red);font-style:normal}
+.hero p{font-size:14px;color:var(--mut);max-width:520px;line-height:1.7;margin-bottom:18px}
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;padding:3px 9px;border-radius:2px}
+.tr{background:var(--rdim);color:var(--red);border:1px solid rgba(232,0,45,.2)}
+.tg{background:var(--gdim);color:var(--grn);border:1px solid rgba(34,197,94,.2)}
+.tb{background:var(--bdim);color:var(--blu);border:1px solid rgba(59,158,255,.2)}
+.ta{background:var(--adim);color:var(--amb);border:1px solid rgba(245,158,11,.2)}
+
+/* Architecture diagram */
+.arch{background:var(--card);border:1px solid var(--bdr);border-radius:8px;
+  padding:20px;margin:14px 0;font-family:var(--mono);font-size:12.5px;
+  line-height:1.9;overflow-x:auto;white-space:pre}
+.arch .green{color:var(--grn)}
+.arch .blue{color:var(--blu)}
+.arch .red{color:var(--red)}
+.arch .mut{color:var(--mut)}
+
+/* Sections */
+.sec{margin-bottom:48px;scroll-margin-top:20px}
+.sec-head{display:flex;align-items:center;gap:11px;margin-bottom:22px;
+  padding-bottom:12px;border-bottom:1px solid var(--bdr)}
+.sec-badge{font-family:var(--fd);font-size:11px;font-weight:900;letter-spacing:1px;
+  padding:3px 9px;border-radius:2px;flex-shrink:0}
+.sr{background:var(--red);color:#fff}
+.sg{background:var(--grn);color:#000}
+.sb2{background:var(--blu);color:#000}
+.sa{background:var(--amb);color:#000}
+.sm{background:#2a2a2a;color:#aaa}
+.sec h2{font-family:var(--fd);font-size:clamp(18px,3vw,28px);font-weight:900;
+  text-transform:uppercase;letter-spacing:-.3px;line-height:1}
+.sec p,.sp{font-size:14px;color:var(--mut);line-height:1.75;margin-bottom:12px}
+
+/* Step timeline */
+.steps{display:flex;flex-direction:column}
+.step{display:flex;position:relative}
+.step::before{content:'';position:absolute;left:17px;top:36px;bottom:0;
+  width:1px;background:var(--bdr)}
+.step:last-child::before{display:none}
+.sn{width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:var(--sur);border:1.5px solid var(--bdr);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:13px;font-weight:900;color:var(--mut);
+  margin-right:16px;margin-top:2px;z-index:1}
+.sb3{flex:1;padding-bottom:26px}
+.st{font-family:var(--fd);font-size:17px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.3px;margin-bottom:5px}
+.sd{font-size:14px;color:var(--mut);line-height:1.7;margin-bottom:8px}
+
+/* Code */
+pre{background:#060606;border:1px solid var(--bdr);border-radius:6px;
+  padding:13px 16px;overflow-x:auto;margin:8px 0;
+  font-family:var(--mono);font-size:12.5px;line-height:1.7}
+.cm{color:var(--dim)} .kw{color:#7dd3fc} .vl{color:#86efac}
+.ky{color:#fca5a5}    .ok{color:var(--grn)} .wn{color:var(--amb)}
+.url{color:#93c5fd;text-decoration:underline}
+code{font-family:var(--mono);font-size:12.5px;background:#141414;
+  padding:2px 5px;border-radius:3px;color:#fca5a5}
+
+/* Callouts */
+.note{display:flex;gap:11px;padding:13px 15px;border-radius:7px;margin:10px 0;align-items:flex-start}
+.ni{font-size:15px;flex-shrink:0;margin-top:1px}
+.nb{flex:1}
+.nt{font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:3px}
+.np{font-size:13px;line-height:1.65}
+.note.info{background:var(--bdim);border:1px solid rgba(59,158,255,.2)}
+.note.info .nt{color:var(--blu)}
+.note.warn{background:var(--adim);border:1px solid rgba(245,158,11,.2)}
+.note.warn .nt{color:var(--amb)}
+.note.good{background:var(--gdim);border:1px solid rgba(34,197,94,.2)}
+.note.good .nt{color:var(--grn)}
+.note.danger{background:var(--rdim);border:1px solid rgba(232,0,45,.2)}
+.note.danger .nt{color:var(--red)}
+
+/* Tables */
+.tw{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--mut);padding:9px 12px;background:var(--sur);border:1px solid var(--bdr);text-align:left}
+td{padding:9px 12px;border:1px solid var(--bdr);color:var(--txt);vertical-align:top;line-height:1.5}
+tr:hover td{background:rgba(255,255,255,.01)}
+td code{font-size:11.5px}
+
+/* Cards */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:11px 0}
+@media(max-width:580px){.g2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:7px;padding:15px}
+.ct{font-family:var(--fd);font-size:12px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:5px}
+.cb{font-size:13px;color:var(--mut);line-height:1.65}
+
+/* Checklist */
+.checks{list-style:none;display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.checks li{display:flex;align-items:flex-start;gap:9px;background:var(--card);
+  border:1px solid var(--bdr);border-radius:5px;padding:10px 12px;font-size:13px}
+.checks li::before{content:'☐';color:var(--mut);flex-shrink:0;font-size:14px;line-height:1.35}
+.checks strong{color:var(--txt)}
+.checks span{color:var(--mut);display:block;font-size:12px;margin-top:1px}
+
+/* Error items */
+.err{background:var(--card);border:1px solid var(--bdr);border-radius:7px;margin-bottom:8px;overflow:hidden}
+.erh{display:flex;align-items:center;gap:9px;padding:10px 13px}
+.eba{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;padding:2px 7px;border-radius:2px;flex-shrink:0}
+.ebr{background:var(--rdim);color:var(--red);border:1px solid rgba(232,0,45,.25)}
+.ebo{background:var(--adim);color:var(--amb);border:1px solid rgba(245,158,11,.25)}
+.ebb{background:var(--bdim);color:var(--blu);border:1px solid rgba(59,158,255,.25)}
+.erm{font-family:var(--mono);font-size:12px;color:var(--txt);flex:1}
+.erb{padding:0 13px 11px;border-top:1px solid var(--bdr)}
+.erc{font-size:13px;color:var(--mut);margin:8px 0 4px}
+.erf{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--grn);margin-bottom:5px}
+
+hr{border:none;border-top:1px solid var(--bdr);margin:36px 0}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">FORGE<span>FIT</span><small>Docs v2 — Split Deploy</small></div>
+  <div class="sb-grp">Overview</div>
+  <a href="#arch" class="sb-a"><span class="n">0</span>Architecture</a>
+  <div class="sb-grp">Part 1 — API &amp; DB (Laptop)</div>
+  <a href="#laptop-prep" class="sb-a"><span class="n">1</span>Prerequisites</a>
+  <a href="#laptop-env" class="sb-a"><span class="n">2</span>Environment Setup</a>
+  <a href="#laptop-docker" class="sb-a"><span class="n">3</span>Start Docker Stack</a>
+  <a href="#first-user" class="sb-a"><span class="n">4</span>Create First User</a>
+  <a href="#tunnel" class="sb-a"><span class="n">5</span>Expose API via Tunnel</a>
+  <div class="sb-grp">Part 2 — Frontend (Vercel)</div>
+  <a href="#vercel-deploy" class="sb-a"><span class="n">6</span>Deploy to Vercel</a>
+  <a href="#vercel-env" class="sb-a"><span class="n">7</span>Set API URL in Vercel</a>
+  <div class="sb-grp">Part 2 alt — Cloudflare Pages</div>
+  <a href="#cf-deploy" class="sb-a"><span class="n">8</span>Deploy to Cloudflare Pages</a>
+  <a href="#cf-tunnel" class="sb-a"><span class="n">9</span>Cloudflare Tunnel (Permanent)</a>
+  <div class="sb-grp">Part 3 — APK</div>
+  <a href="#apk" class="sb-a"><span class="n">10</span>Phone &amp; Watch APK</a>
+  <div class="sb-grp">Part 4 — Testing</div>
+  <a href="#first-login" class="sb-a"><span class="n">11</span>First Login</a>
+  <a href="#test" class="sb-a"><span class="n">12</span>Test All Features</a>
+  <div class="sb-grp">Part 5 — Ops</div>
+  <a href="#errors" class="sb-a"><span class="n">13</span>Common Errors</a>
+  <a href="#users" class="sb-a"><span class="n">14</span>Managing Users</a>
+  <a href="#cheat" class="sb-a"><span class="n">15</span>Cheat Sheet</a>
+</nav>
+
+<!-- CONTENT -->
+<main class="content"><div class="ci">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="h-tag">Split Deployment — Vercel / Cloudflare + Docker Laptop</div>
+  <h1>DEPLOY<br><em>FORGEFIT</em></h1>
+  <p>Frontend on Vercel or Cloudflare Pages (free, global CDN). API and PostgreSQL on your laptop via Docker, exposed to the internet through a tunnel. No cloud server needed.</p>
+  <div class="tags">
+    <span class="tag tg">Vercel / CF Pages</span>
+    <span class="tag tb">Docker on Laptop</span>
+    <span class="tag tr">PostgreSQL</span>
+    <span class="tag ta">ngrok / CF Tunnel</span>
+    <span class="tag tg">Puter.js AI (Free)</span>
+    <span class="tag tb">JWT Auth</span>
+  </div>
+</div>
+
+<!-- 0. ARCHITECTURE -->
+<section class="sec" id="arch">
+  <div class="sec-head"><span class="sec-badge sm">0</span><h2>Architecture</h2></div>
+  <p class="sp">Two completely separate pieces. The frontend is static HTML/CSS/JS — it costs nothing to host and serves instantly from a CDN. The API and database run locally on your laptop in Docker, made reachable from anywhere via a secure tunnel.</p>
+
+  <div class="arch"><span class="mut">Internet (users, APK)</span>
+        │
+        ▼
+<span class="green">┌──────────────────────────────────────────┐
+│  Vercel / Cloudflare Pages (FREE)        │
+│  forgefit.rakshitr.co.in                 │
+│                                          │
+│  /          → landing page (index.html)  │
+│  /app/      → PWA app (app/index.html)   │
+│  /app/?watch=1 → watch layout            │
+└──────────────────────────────────────────┘</span>
+        │ HTTPS API calls to absolute URL
+        ▼
+<span class="blue">┌──────────────────────────────────────────┐
+│  ngrok / Cloudflare Tunnel               │
+│  api.forgefit.rakshitr.co.in             │
+│  (or https://abc123.ngrok-free.app)      │
+└──────────────────────────────────────────┘</span>
+        │
+        ▼
+<span class="red">┌──────────────────────────────────────────┐
+│  Your Laptop — Docker                    │
+│                                          │
+│  [forgefit_api]  Node.js :3001           │
+│       │                                  │
+│  [forgefit_db]   PostgreSQL :5432        │
+│       │  (localhost only, not exposed)   │
+└──────────────────────────────────────────┘</span></div>
+
+  <div class="note info">
+    <div class="ni">💡</div>
+    <div class="nb">
+      <div class="nt">Why this setup?</div>
+      <div class="np">You get a real public URL, global CDN performance, and zero hosting cost — while keeping your data on your own machine with no cloud database fees. The only catch: your laptop must be on and Docker must be running when you use the app.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <div class="ni">⚠️</div>
+    <div class="nb">
+      <div class="nt">Laptop must be running</div>
+      <div class="np">Whenever you want to use the app (login, log workouts, use AI coach), your laptop must be awake with Docker running and the tunnel active. The frontend works offline for reading, but all data operations need the API.</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- 1. LAPTOP PREP -->
+<section class="sec" id="laptop-prep">
+  <div class="sec-head"><span class="sec-badge sr">1</span><h2>Laptop Prerequisites</h2></div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Install Docker Desktop</div>
+      <div class="sd">If not already installed:</div>
+      <pre><span class="cm"># Mac:</span>
+<span class="cm">brew install --cask docker</span>
+<span class="cm"># Or download from: https://docs.docker.com/desktop/install/mac-install/</span>
+
+<span class="cm"># Windows:</span>
+<span class="cm">https://docs.docker.com/desktop/install/windows-install/</span>
+
+<span class="cm"># Ubuntu/Debian Linux:</span>
+<span class="kw">curl</span> -fsSL https://get.docker.com | sh
+<span class="kw">usermod</span> -aG docker $USER && <span class="kw">newgrp</span> docker</pre>
+      <div class="sd">Verify: <code>docker --version</code> and <code>docker compose version</code></div>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Install a tunnel client</div>
+      <div class="sd">Pick one — you need this to make your laptop's API reachable from the internet.</div>
+      <div class="tw"><table>
+        <tr><th>Tool</th><th>Cost</th><th>Persistent URL?</th><th>Install</th></tr>
+        <tr><td><strong>ngrok</strong></td><td>Free tier available</td><td>❌ Changes on restart (free) / ✅ Fixed on paid</td><td><code>brew install ngrok</code></td></tr>
+        <tr><td><strong>Cloudflare Tunnel</strong></td><td>Free</td><td>✅ Permanent custom subdomain</td><td><code>brew install cloudflared</code></td></tr>
+      </table></div>
+      <div class="note good">
+        <div class="ni">✅</div>
+        <div class="nb"><div class="nt">Recommendation</div><div class="np">Use <strong>Cloudflare Tunnel</strong> — it's completely free, gives you a permanent URL like <code>api.forgefit.rakshitr.co.in</code>, and works as long as cloudflared is running. You only set it up once.</div></div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 2. LAPTOP ENV -->
+<section class="sec" id="laptop-env">
+  <div class="sec-head"><span class="sec-badge sr">2</span><h2>Environment Setup</h2></div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Get the project files</div>
+      <pre><span class="cm"># Unzip the project on your laptop</span>
+<span class="kw">cd</span> ~/Documents
+<span class="kw">unzip</span> forgefit-fullstack.zip
+<span class="kw">cd</span> forgefit</pre>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Create the .env file</div>
+      <pre><span class="kw">cp</span> .env.example .env</pre>
+      <div class="sd">Open <code>.env</code> in any text editor and fill in these values:</div>
+      <pre><span class="ky">DB_PASSWORD</span>=<span class="vl">PickAStrongPasswordHere</span>
+
+<span class="cm"># Generate with: openssl rand -hex 64</span>
+<span class="ky">JWT_SECRET</span>=<span class="vl">paste_64_char_hex_here</span>
+
+<span class="cm"># Your Vercel/Cloudflare Pages domain</span>
+<span class="ky">FRONTEND_URL</span>=<span class="vl">https://forgefit.rakshitr.co.in</span>
+
+<span class="cm"># Optional: add your tunnel URL too (so CORS passes during testing)</span>
+<span class="cm"># FRONTEND_URL_2=https://abc123.ngrok-free.app</span></pre>
+      <div class="note danger">
+        <div class="ni">🔒</div>
+        <div class="nb"><div class="nt">Keep .env on your laptop only</div><div class="np">Never commit <code>.env</code> to GitHub. It's in <code>.gitignore</code> already. If you accidentally push it, rotate your JWT_SECRET immediately.</div></div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 3. DOCKER -->
+<section class="sec" id="laptop-docker">
+  <div class="sec-head"><span class="sec-badge sr">3</span><h2>Start the Docker Stack</h2></div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Start PostgreSQL + API</div>
+      <div class="sd">From your <code>forgefit/</code> project folder:</div>
+      <pre><span class="kw">docker compose up</span> -d --build
+
+<span class="cm"># First run downloads images and builds the API — takes 2–4 min.
+# Expected output:</span>
+<span class="ok">[+] Running 2/2
+  ✔ Container forgefit_db    Started
+  ✔ Container forgefit_api   Started</span>
+
+<span class="cm"># Verify both are healthy after ~20 seconds:</span>
+<span class="kw">docker compose ps</span>
+<span class="ok">NAME             STATUS
+forgefit_db      Up (healthy)
+forgefit_api     Up (healthy)</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Test the API locally</div>
+      <pre><span class="kw">curl</span> http://localhost:3001/health
+<span class="ok">{"status":"ok","ts":"2025-..."}</span></pre>
+    </div></div>
+  </div>
+  <div class="note info">
+    <div class="ni">💡</div>
+    <div class="nb">
+      <div class="nt">Note: No Nginx container</div>
+      <div class="np">The new <code>docker-compose.yml</code> only has two containers — PostgreSQL and the API. Nginx is gone. The frontend is served by Vercel/Cloudflare Pages instead. The PostgreSQL port is bound to <code>127.0.0.1</code> only — it cannot be reached from outside your laptop.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. FIRST USER -->
+<section class="sec" id="first-user">
+  <div class="sec-head"><span class="sec-badge sr">4</span><h2>Create Your First User</h2></div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Open the database shell</div>
+      <pre><span class="kw">docker exec</span> -it forgefit_db psql -U forgefit_user -d forgefit
+<span class="ok">forgefit=#</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Insert your admin account</div>
+      <pre><span class="kw">INSERT INTO</span> users (username, email, password_hash, role)
+<span class="kw">VALUES</span> (
+  <span class="vl">'rakshit'</span>,
+  <span class="vl">'rakshitr2000@gmail.com'</span>,
+  crypt(<span class="vl">'YourPassword'</span>, gen_salt(<span class="vl">'bf'</span>)),
+  <span class="vl">'admin'</span>
+);
+\q</pre>
+    </div></div>
+  </div>
+</section>
+
+<!-- 5. TUNNEL -->
+<section class="sec" id="tunnel">
+  <div class="sec-head"><span class="sec-badge sr">5</span><h2>Expose API via Tunnel</h2></div>
+  <p class="sp">Your API runs on <code>localhost:3001</code>. A tunnel creates a public HTTPS URL that forwards internet traffic to it. The frontend (on Vercel/CF Pages) needs this URL to make API calls.</p>
+
+  <h3 style="font-family:var(--fd);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin:0 0 14px">Option A — Cloudflare Tunnel (Recommended — Permanent URL)</h3>
+
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Install cloudflared</div>
+      <pre><span class="cm"># Mac:</span>
+<span class="kw">brew install</span> cloudflare/cloudflare/cloudflared
+
+<span class="cm"># Windows (PowerShell as admin):</span>
+<span class="kw">winget install</span> --id Cloudflare.cloudflared
+
+<span class="cm"># Linux:</span>
+<span class="kw">curl</span> -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cf.deb
+<span class="kw">sudo dpkg</span> -i cf.deb</pre>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Log in to Cloudflare</div>
+      <pre><span class="kw">cloudflared tunnel login</span>
+<span class="cm"># Opens browser — sign in to your Cloudflare account
+# Select the zone: rakshitr.co.in</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">3</div><div class="sb3">
+      <div class="st">Create a named tunnel</div>
+      <pre><span class="kw">cloudflared tunnel create</span> forgefit-api
+<span class="cm"># Output: Tunnel credentials written to ~/.cloudflared/&lt;UUID&gt;.json</span>
+<span class="cm"># Note the UUID — you need it in the next step</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">4</div><div class="sb3">
+      <div class="st">Create the tunnel config file</div>
+      <div class="sd">Create <code>~/.cloudflared/config.yml</code>:</div>
+      <pre><span class="ky">tunnel</span>: <span class="vl">&lt;YOUR-TUNNEL-UUID&gt;</span>
+<span class="ky">credentials-file</span>: <span class="vl">/Users/YOUR_USERNAME/.cloudflared/&lt;UUID&gt;.json</span>
+
+<span class="ky">ingress</span>:
+  - <span class="ky">hostname</span>: <span class="vl">api.forgefit.rakshitr.co.in</span>
+    <span class="ky">service</span>: <span class="vl">http://localhost:3001</span>
+  - <span class="ky">service</span>: <span class="vl">http_status:404</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">5</div><div class="sb3">
+      <div class="st">Add DNS record in Cloudflare</div>
+      <pre><span class="kw">cloudflared tunnel route dns</span> forgefit-api api.forgefit.rakshitr.co.in
+<span class="cm"># Creates a CNAME: api.forgefit.rakshitr.co.in → &lt;UUID&gt;.cfargotunnel.com</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">6</div><div class="sb3">
+      <div class="st">Run the tunnel</div>
+      <pre><span class="kw">cloudflared tunnel run</span> forgefit-api
+<span class="cm"># API is now live at: https://api.forgefit.rakshitr.co.in</span>
+<span class="cm"># Keep this terminal open while using the app</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">7</div><div class="sb3">
+      <div class="st">Auto-start tunnel on login (optional)</div>
+      <pre><span class="cm"># Mac — run as a service:</span>
+<span class="kw">sudo cloudflared service install</span>
+<span class="kw">sudo launchctl start</span> com.cloudflare.cloudflared
+
+<span class="cm"># Linux (systemd):</span>
+<span class="kw">sudo cloudflared service install</span>
+<span class="kw">sudo systemctl start cloudflared</span>
+<span class="kw">sudo systemctl enable cloudflared</span></pre>
+    </div></div>
+  </div>
+
+  <hr style="margin:24px 0">
+
+  <h3 style="font-family:var(--fd);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin:0 0 14px">Option B — ngrok (Quicker setup, URL changes on free plan)</h3>
+
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Install and authenticate</div>
+      <pre><span class="cm"># Mac:</span>
+<span class="kw">brew install ngrok/ngrok/ngrok</span>
+<span class="cm"># Sign up at https://ngrok.com, then:</span>
+<span class="kw">ngrok config add-authtoken</span> <span class="vl">YOUR_AUTH_TOKEN</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Start the tunnel</div>
+      <pre><span class="kw">ngrok http</span> 3001
+<span class="cm"># Shows your public URL, e.g.:</span>
+<span class="ok">Forwarding  https://abc123.ngrok-free.app → localhost:3001</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">3</div><div class="sb3">
+      <div class="st">Update your Vercel API_URL env var</div>
+      <div class="sd">Each time ngrok restarts (free plan), you get a new URL. Update the <code>API_URL</code> env var in your Vercel dashboard and redeploy. On paid ngrok plans you can pin a static subdomain to avoid this.</div>
+    </div></div>
+  </div>
+
+  <div class="note good">
+    <div class="ni">🚀</div>
+    <div class="nb">
+      <div class="nt">Quick start script</div>
+      <div class="np">The project includes a helper: <code>./scripts/start-tunnel.sh ngrok</code> or <code>./scripts/start-tunnel.sh cloudflare</code></div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- 6. VERCEL DEPLOY -->
+<section class="sec" id="vercel-deploy">
+  <div class="sec-head"><span class="sec-badge sg">6</span><h2>Deploy Frontend to Vercel</h2></div>
+  <p class="sp">Vercel detects the project as a static site automatically. It serves your HTML from a global CDN with zero configuration.</p>
+
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Push project to GitHub</div>
+      <pre><span class="kw">cd</span> ~/Documents/forgefit
+<span class="kw">git init</span>
+<span class="kw">git add</span> .
+<span class="kw">git commit</span> -m <span class="vl">"Initial commit — ForgeFit"</span>
+<span class="cm"># Create repo at github.com, then:</span>
+<span class="kw">git remote add origin</span> https://github.com/YOURNAME/forgefit.git
+<span class="kw">git push</span> -u origin main</pre>
+      <div class="note warn">
+        <div class="ni">⚠️</div>
+        <div class="nb"><div class="nt">.env is excluded automatically</div><div class="np"><code>.gitignore</code> already excludes <code>.env</code> and <code>nginx/certs/</code>. Never manually add them.</div></div>
+      </div>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Import project on Vercel</div>
+      <div class="sd">Go to <a href="https://vercel.com" style="color:var(--blu)" target="_blank">vercel.com</a> → New Project → Import from GitHub → select your <code>forgefit</code> repo.</div>
+    </div></div>
+    <div class="step"><div class="sn">3</div><div class="sb3">
+      <div class="st">Set build settings</div>
+      <div class="tw"><table>
+        <tr><th>Setting</th><th>Value</th></tr>
+        <tr><td>Framework Preset</td><td>Other</td></tr>
+        <tr><td>Root Directory</td><td><code>./</code> (repo root)</td></tr>
+        <tr><td>Build Command</td><td><code>node scripts/inject-api-url.js</code></td></tr>
+        <tr><td>Output Directory</td><td><code>frontend/public</code></td></tr>
+        <tr><td>Install Command</td><td><em>leave blank</em></td></tr>
+      </table></div>
+    </div></div>
+    <div class="step"><div class="sn">4</div><div class="sb3">
+      <div class="st">Add the API_URL environment variable</div>
+      <div class="sd">Still on the Vercel project setup page, scroll to Environment Variables:</div>
+      <div class="tw"><table>
+        <tr><th>Name</th><th>Value</th></tr>
+        <tr><td><code>API_URL</code></td><td><code>https://api.forgefit.rakshitr.co.in</code> (or your ngrok URL)</td></tr>
+      </table></div>
+    </div></div>
+    <div class="step"><div class="sn">5</div><div class="sb3">
+      <div class="st">Click Deploy</div>
+      <div class="sd">Vercel builds in ~30 seconds. You get a URL like <code>forgefit.vercel.app</code>. Then add your custom domain:</div>
+      <pre><span class="cm">Project Settings → Domains → Add Domain</span>
+<span class="cm">Type: forgefit.rakshitr.co.in</span>
+<span class="cm">Follow Vercel's instructions to add a CNAME in your DNS</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">6</div><div class="sb3">
+      <div class="st">Add your Vercel domain to .env FRONTEND_URL</div>
+      <div class="sd">Open your local <code>.env</code> and set:</div>
+      <pre><span class="ky">FRONTEND_URL</span>=<span class="vl">https://forgefit.rakshitr.co.in</span></pre>
+      <div class="sd">Then restart the API container:</div>
+      <pre><span class="kw">docker compose restart</span> api</pre>
+    </div></div>
+  </div>
+</section>
+
+<!-- 7. VERCEL ENV UPDATE -->
+<section class="sec" id="vercel-env">
+  <div class="sec-head"><span class="sec-badge sg">7</span><h2>Updating API URL in Vercel</h2></div>
+  <p class="sp">Any time your tunnel URL changes (ngrok free plan restarts), you need to update the environment variable in Vercel and redeploy.</p>
+  <pre><span class="cm"># Quick way via Vercel CLI:</span>
+<span class="kw">npm i -g vercel</span>
+<span class="kw">vercel env add</span> API_URL production
+<span class="cm"># Paste new tunnel URL when prompted</span>
+<span class="kw">vercel</span> --prod  <span class="cm"># redeploy</span></pre>
+  <div class="note info">
+    <div class="ni">💡</div>
+    <div class="nb"><div class="nt">Use Cloudflare Tunnel to avoid this</div><div class="np">With a named Cloudflare Tunnel, your API URL is always <code>https://api.forgefit.rakshitr.co.in</code> — it never changes. Set <code>API_URL</code> in Vercel once and never touch it again.</div></div>
+  </div>
+</section>
+
+<hr>
+
+<!-- 8. CLOUDFLARE PAGES DEPLOY -->
+<section class="sec" id="cf-deploy">
+  <div class="sec-head"><span class="sec-badge sb2">8</span><h2>Deploy to Cloudflare Pages</h2></div>
+  <p class="sp">Alternative to Vercel. Also free, also global CDN. Works especially well if you're already using Cloudflare for DNS (which you are, if you use Cloudflare Tunnel).</p>
+
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb3">
+      <div class="st">Push to GitHub (same as Vercel step 1)</div>
+      <div class="sd">Same Git setup — skip this if already done.</div>
+    </div></div>
+    <div class="step"><div class="sn">2</div><div class="sb3">
+      <div class="st">Create a Cloudflare Pages project</div>
+      <div class="sd">Go to <a href="https://dash.cloudflare.com" style="color:var(--blu)" target="_blank">dash.cloudflare.com</a> → Pages → Create a project → Connect to Git → select your forgefit repo.</div>
+    </div></div>
+    <div class="step"><div class="sn">3</div><div class="sb3">
+      <div class="st">Build settings</div>
+      <div class="tw"><table>
+        <tr><th>Setting</th><th>Value</th></tr>
+        <tr><td>Production branch</td><td><code>main</code></td></tr>
+        <tr><td>Framework preset</td><td>None</td></tr>
+        <tr><td>Build command</td><td><code>node scripts/inject-api-url.js</code></td></tr>
+        <tr><td>Build output directory</td><td><code>frontend/public</code></td></tr>
+      </table></div>
+    </div></div>
+    <div class="step"><div class="sn">4</div><div class="sb3">
+      <div class="st">Add environment variable</div>
+      <div class="sd">In the Cloudflare Pages project → Settings → Environment Variables → Production:</div>
+      <pre><span class="ky">API_URL</span> = <span class="vl">https://api.forgefit.rakshitr.co.in</span></pre>
+    </div></div>
+    <div class="step"><div class="sn">5</div><div class="sb3">
+      <div class="st">Custom domain</div>
+      <div class="sd">Pages → Custom Domains → Add <code>forgefit.rakshitr.co.in</code>. Since your DNS is already on Cloudflare, this activates instantly — no CNAME needed.</div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 9. CF TUNNEL PERMANENT -->
+<section class="sec" id="cf-tunnel">
+  <div class="sec-head"><span class="sec-badge sb2">9</span><h2>Cloudflare Tunnel — Permanent Setup</h2></div>
+  <p class="sp">If you completed Section 5 Option A, your tunnel is already running. This section covers making it reliable long-term.</p>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ct">🔁 Auto-restart on reboot</div>
+      <div class="cb">
+        <pre style="font-size:11.5px;margin-top:6px"><span class="cm"># Mac:</span>
+<span class="kw">sudo cloudflared service install</span>
+
+<span class="cm"># Linux:</span>
+<span class="kw">sudo systemctl enable cloudflared</span></pre>
+        Tunnel restarts automatically every time your laptop boots.
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">🔍 Check tunnel status</div>
+      <div class="cb">
+        <pre style="font-size:11.5px;margin-top:6px"><span class="kw">cloudflared tunnel info</span> forgefit-api
+
+<span class="cm"># Or via curl:</span>
+<span class="kw">curl</span> https://api.forgefit.rakshitr.co.in/health
+<span class="ok">{"status":"ok"}</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="note info">
+    <div class="ni">🌐</div>
+    <div class="nb">
+      <div class="nt">Your final URLs</div>
+      <div class="np">
+        Frontend: <code>https://forgefit.rakshitr.co.in</code><br>
+        App: <code>https://forgefit.rakshitr.co.in/app/</code><br>
+        API: <code>https://api.forgefit.rakshitr.co.in</code><br>
+        Health: <code>https://api.forgefit.rakshitr.co.in/health</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- 10. APK -->
+<section class="sec" id="apk">
+  <div class="sec-head"><span class="sec-badge sa">10</span><h2>Phone &amp; Watch APK</h2></div>
+  <p class="sp">APK setup is identical to before — just make sure the URLs point to your Vercel/CF Pages frontend, not a local server.</p>
+
+  <div class="tw"><table>
+    <tr><th>APK</th><th>URL to enter in WebIntoApp / GoNative</th><th>Package Name</th></tr>
+    <tr><td>Phone</td><td><code>https://forgefit.rakshitr.co.in/app/</code></td><td><code>co.rakshitr.forgefit</code></td></tr>
+    <tr><td>Watch</td><td><code>https://forgefit.rakshitr.co.in/app/?watch=1</code></td><td><code>co.rakshitr.forgefit.watch</code></td></tr>
+  </table></div>
+
+  <div class="note info">
+    <div class="ni">💡</div>
+    <div class="nb"><div class="nt">APK still works when laptop is off</div><div class="np">The APK loads the Vercel-hosted HTML — this works offline and when your laptop is off. Login, data, and AI require the API to be running. The app gracefully shows errors if the API is unreachable.</div></div>
+  </div>
+</section>
+
+<hr>
+
+<!-- 11. FIRST LOGIN -->
+<section class="sec" id="first-login">
+  <div class="sec-head"><span class="sec-badge sg">11</span><h2>First Login</h2></div>
+  <ul class="checks">
+    <li><div><strong>Docker running</strong><span><code>docker compose ps</code> shows both containers healthy</span></div></li>
+    <li><div><strong>Tunnel active</strong><span><code>curl https://api.forgefit.rakshitr.co.in/health</code> returns <code>{"status":"ok"}</code></span></div></li>
+    <li><div><strong>Frontend live</strong><span>Open <code>https://forgefit.rakshitr.co.in/app/</code> — login screen appears</span></div></li>
+    <li><div><strong>Log in</strong><span>Enter the username/password you created with SQL</span></div></li>
+    <li><div><strong>Complete profile setup</strong><span>Name, age, sex, height, weight, goal — then Puter sign-in for free AI</span></div></li>
+  </ul>
+</section>
+
+<!-- 12. TEST -->
+<section class="sec" id="test">
+  <div class="sec-head"><span class="sec-badge sg">12</span><h2>Test All Features</h2></div>
+  <div class="tw"><table>
+    <tr><th>Feature</th><th>How to Test</th><th>Requires Laptop On?</th></tr>
+    <tr><td>Login</td><td>Enter username + password</td><td>✅ Yes</td></tr>
+    <tr><td>AI Coach</td><td>Coach tab → send a message</td><td>✅ Yes (API stores chat)</td></tr>
+    <tr><td>Workout plan</td><td>Train → AI PLAN → Generate</td><td>❌ AI is via Puter (client-side)</td></tr>
+    <tr><td>Log progress</td><td>Progress → enter weight → Save</td><td>✅ Yes</td></tr>
+    <tr><td>Alarms</td><td>Goals → set alarm → wait</td><td>❌ Alarms fire client-side</td></tr>
+    <tr><td>Report analysis</td><td>Upload MovingLife image → Analyse</td><td>❌ AI is via Puter</td></tr>
+    <tr><td>Watch pedometer</td><td>Open <code>/app/?watch=1</code></td><td>✅ For step sync to DB</td></tr>
+  </table></div>
+</section>
+
+<hr>
+
+<!-- 13. ERRORS -->
+<section class="sec" id="errors">
+  <div class="sec-head"><span class="sec-badge sa">13</span><h2>Common Errors</h2></div>
+
+  <div class="err">
+    <div class="erh"><span class="eba ebr">CORS</span><span class="erm">Access to fetch at 'https://api...' from origin 'https://forgefit...' has been blocked</span></div>
+    <div class="erb">
+      <div class="erc">The API's CORS config doesn't include your frontend URL.</div>
+      <div class="erf">Fix</div>
+      <pre><span class="cm"># In your .env on the laptop:</span>
+<span class="ky">FRONTEND_URL</span>=<span class="vl">https://forgefit.rakshitr.co.in</span>
+<span class="cm"># Then:</span>
+<span class="kw">docker compose restart</span> api</pre>
+    </div>
+  </div>
+
+  <div class="err">
+    <div class="erh"><span class="eba ebo">API</span><span class="erm">Failed to fetch / Network Error when calling API from frontend</span></div>
+    <div class="erb">
+      <div class="erc">Tunnel is not running, or Docker API container is down.</div>
+      <div class="erf">Fix</div>
+      <pre><span class="cm"># Check Docker:</span>
+<span class="kw">docker compose ps</span>
+<span class="kw">docker compose logs</span> api --tail=20
+
+<span class="cm"># Check tunnel:</span>
+<span class="kw">curl</span> https://api.forgefit.rakshitr.co.in/health
+
+<span class="cm"># Restart tunnel:</span>
+<span class="kw">cloudflared tunnel run</span> forgefit-api
+<span class="cm"># or: ngrok http 3001</span></pre>
+    </div>
+  </div>
+
+  <div class="err">
+    <div class="erh"><span class="eba ebb">Vercel</span><span class="erm">App loads but API URL still shows localhost or wrong URL</span></div>
+    <div class="erb">
+      <div class="erc">The inject-api-url.js script didn't find the placeholder, or API_URL env var wasn't set before deploy.</div>
+      <div class="erf">Fix</div>
+      <pre><span class="cm"># In Vercel dashboard: Settings → Environment Variables</span>
+<span class="cm"># Add or update: API_URL = https://api.forgefit.rakshitr.co.in</span>
+<span class="cm"># Then: Deployments → Redeploy (top-right menu on latest deploy)</span></pre>
+    </div>
+  </div>
+
+  <div class="err">
+    <div class="erh"><span class="eba ebo">DB</span><span class="erm">Login returns "Invalid credentials"</span></div>
+    <div class="erb">
+      <div class="erc">Typo when inserting user, or DB was wiped.</div>
+      <div class="erf">Fix</div>
+      <pre><span class="kw">docker exec</span> -it forgefit_db psql -U forgefit_user -d forgefit
+<span class="kw">SELECT</span> username, is_active FROM users;
+<span class="kw">UPDATE</span> users SET password_hash = crypt(<span class="vl">'NewPass'</span>, gen_salt(<span class="vl">'bf'</span>)) WHERE username = <span class="vl">'rakshit'</span>;</pre>
+    </div>
+  </div>
+
+  <div class="err">
+    <div class="erh"><span class="eba ebo">Cloudflare</span><span class="erm">tunnel: failed to connect to origin — connection refused</span></div>
+    <div class="erb">
+      <div class="erc">Docker API container not running when tunnel tried to connect.</div>
+      <div class="erf">Fix</div>
+      <pre><span class="cm"># Start Docker first, then start the tunnel:</span>
+<span class="kw">docker compose up</span> -d
+<span class="kw">cloudflared tunnel run</span> forgefit-api</pre>
+    </div>
+  </div>
+</section>
+
+<!-- 14. USERS -->
+<section class="sec" id="users">
+  <div class="sec-head"><span class="sec-badge sm">14</span><h2>Managing Users</h2></div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">✅ Add a user</div>
+      <div class="cb"><pre style="font-size:11.5px;margin-top:6px"><span class="kw">INSERT INTO</span> users
+  (username,email,password_hash)
+<span class="kw">VALUES</span>(
+  <span class="vl">'friend'</span>,<span class="vl">'f@x.com'</span>,
+  crypt(<span class="vl">'pass'</span>,gen_salt(<span class="vl">'bf'</span>))
+);</pre>
+        Share app URL + their credentials.
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">🚫 Remove access</div>
+      <div class="cb"><pre style="font-size:11.5px;margin-top:6px"><span class="kw">UPDATE</span> users
+SET is_active = false
+WHERE username=<span class="vl">'friend'</span>;</pre>
+        Token stops working immediately.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15. CHEAT SHEET -->
+<section class="sec" id="cheat">
+  <div class="sec-head"><span class="sec-badge sm">15</span><h2>Quick Cheat Sheet</h2></div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">🚀 Daily startup</div>
+      <div class="cb"><pre style="font-size:11.5px;margin-top:6px"><span class="cm"># 1. Start Docker</span>
+<span class="kw">docker compose up</span> -d
+
+<span class="cm"># 2. Start tunnel</span>
+<span class="kw">cloudflared tunnel run</span> forgefit-api
+<span class="cm"># or: ngrok http 3001</span>
+
+<span class="cm"># 3. Test</span>
+<span class="kw">curl</span> https://api.forgefit.rakshitr.co.in/health</pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">🛑 Shutdown</div>
+      <div class="cb"><pre style="font-size:11.5px;margin-top:6px"><span class="cm"># Stop Docker</span>
+<span class="kw">docker compose down</span>
+
+<span class="cm"># Stop tunnel</span>
+<span class="cm">Ctrl+C in tunnel terminal
+or: sudo systemctl stop cloudflared</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">🔍 Debug</div>
+      <div class="cb"><pre style="font-size:11.5px;margin-top:6px"><span class="kw">docker compose ps</span>
+<span class="kw">docker compose logs</span> -f api
+<span class="kw">docker exec</span> -it forgefit_db \
+  psql -U forgefit_user -d forgefit</pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">🌐 URLs</div>
+      <div class="cb" style="font-size:12.5px;line-height:1.9">
+        Landing: <code>forgefit.rakshitr.co.in</code><br>
+        App: <code>.../app/</code><br>
+        Watch: <code>.../app/?watch=1</code><br>
+        API health: <code>api.forgefit.rakshitr.co.in/health</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div></main>
+</div>
+
+<script>
+const secs=document.querySelectorAll('.sec[id]');
+const links=document.querySelectorAll('.sb-a');
+new IntersectionObserver(e=>{
+  e.forEach(en=>{
+    if(en.isIntersecting){
+      links.forEach(l=>l.classList.remove('on'));
+      const a=document.querySelector(`.sb-a[href="#${en.target.id}"]`);
+      if(a)a.classList.add('on');
+    }
+  });
+},{threshold:.25,rootMargin:'-5% 0px -65% 0px'}).observe(secs[0]);
+secs.forEach(s=>new IntersectionObserver(e=>{
+  e.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.remove('on'));
+  const a=document.querySelector(`.sb-a[href="#${en.target.id}"]`);if(a)a.classList.add('on');}});
+},{threshold:.25,rootMargin:'-5% 0px -65% 0px'}).observe(s));
+</script>
+</body>
+</html>

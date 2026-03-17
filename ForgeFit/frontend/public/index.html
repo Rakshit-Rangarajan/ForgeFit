@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="ForgeFit — Your AI Personal Trainer. Forge your body from zero to fit.">
+<meta property="og:title" content="ForgeFit — AI Personal Trainer">
+<meta property="og:description" content="From zero to fit. AI coaching, health tracking, and personalised workout plans.">
+<title>ForgeFit — Forge Your Body</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;0,900;1,800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+:root{--black:#000;--white:#fff;--red:#e8002d;--g900:#080808;--g800:#111;--g700:#1a1a1a;--g600:#242424;--g500:#333;--g400:#555;--g300:#888;--g200:#bbb;--fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:var(--fb);overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,5vw,80px);height:64px;background:rgba(0,0,0,.88);backdrop-filter:blur(20px);border-bottom:1px solid #1a1a1a}
+.nav-logo{font-family:var(--fd);font-size:28px;font-weight:900;letter-spacing:-1px;text-transform:uppercase}
+.nav-logo span{color:var(--red)}
+.nav-cta{background:var(--white);color:var(--black);border:none;font-family:var(--fd);font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:10px 22px;border-radius:4px;cursor:pointer;text-decoration:none;transition:opacity .15s;display:inline-flex;align-items:center;gap:8px}
+.nav-cta:hover{opacity:.88}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-link{color:var(--g300);font-size:13px;font-family:var(--fd);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--white)}
+@media(max-width:640px){.nav-links .nav-link{display:none}}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px clamp(20px,6vw,80px) 80px;position:relative;overflow:hidden;text-align:center}
+.hero-bg-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--fd);font-size:clamp(140px,26vw,360px);font-weight:900;color:rgba(255,255,255,.022);line-height:1;text-transform:uppercase;pointer-events:none;user-select:none;letter-spacing:-10px;white-space:nowrap}
+.hero-tag{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--red);margin-bottom:20px;display:flex;align-items:center;gap:10px;justify-content:center}
+.hero-tag::before,.hero-tag::after{content:'';width:28px;height:1px;background:var(--red)}
+h1{font-family:var(--fd);font-size:clamp(68px,16vw,168px);font-weight:900;line-height:.84;letter-spacing:-3px;text-transform:uppercase;margin-bottom:24px}
+h1 span{color:var(--red)}
+.hero-sub{font-size:clamp(15px,2.2vw,19px);color:var(--g200);max-width:540px;line-height:1.65;margin-bottom:44px}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--white);color:var(--black);border:none;font-family:var(--fd);font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:18px 36px;border-radius:4px;cursor:pointer;text-decoration:none;transition:all .15s;display:inline-flex;align-items:center;gap:10px}
+.btn-primary:hover{opacity:.88}
+.btn-primary:active{transform:scale(.98)}
+.btn-ghost{background:transparent;color:var(--white);border:1.5px solid var(--g500);font-family:var(--fd);font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:17px 32px;border-radius:4px;cursor:pointer;text-decoration:none;transition:all .15s;display:inline-flex;align-items:center;gap:8px}
+.btn-ghost:hover{border-color:var(--white)}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g500)}
+.scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,var(--g500),transparent);animation:sp 2s infinite}
+@keyframes sp{0%,100%{opacity:.25}50%{opacity:.9}}
+
+.stats{background:var(--g900);border-top:1px solid var(--g700);border-bottom:1px solid var(--g700);display:grid;grid-template-columns:repeat(4,1fr)}
+.sc{padding:clamp(18px,3.5vw,36px) clamp(14px,3vw,40px);border-right:1px solid var(--g700);text-align:center}
+.sc:last-child{border-right:none}
+.sv{font-family:var(--fd);font-size:clamp(32px,6vw,60px);font-weight:900;line-height:1;margin-bottom:4px}
+.sv span{color:var(--red)}
+.sk{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g400)}
+@media(max-width:560px){.stats{grid-template-columns:1fr 1fr}.sc:nth-child(2){border-right:none}.sc:nth-child(3){border-top:1px solid var(--g700)}.sc:last-child{border-top:1px solid var(--g700)}}
+
+.section{padding:clamp(56px,9vw,120px) clamp(20px,6vw,80px)}
+.s-tag{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+h2{font-family:var(--fd);font-size:clamp(36px,7vw,72px);font-weight:900;line-height:.9;text-transform:uppercase;margin-bottom:14px}
+h2 span{color:var(--red)}
+.s-desc{font-size:clamp(14px,2vw,16px);color:var(--g300);max-width:520px;line-height:1.65;margin-bottom:44px}
+
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--g700)}
+.feat{background:var(--g900);padding:clamp(20px,3.5vw,36px);transition:background .2s;cursor:default}
+.feat:hover{background:var(--g800)}
+.feat-ico{font-size:28px;margin-bottom:14px;display:block}
+.feat-t{font-family:var(--fd);font-size:clamp(16px,2.5vw,22px);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.feat-d{font-size:13px;color:var(--g300);line-height:1.65}
+
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px}
+.how{text-align:center}
+.how-n{font-family:var(--fd);font-size:64px;font-weight:900;color:rgba(232,0,45,.12);line-height:1;margin-bottom:10px}
+.how-t{font-family:var(--fd);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.how-d{font-size:13px;color:var(--g300);line-height:1.65}
+
+.mockup-wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,72px);align-items:center;background:var(--g900);padding:clamp(56px,9vw,120px) clamp(20px,6vw,80px);border-top:1px solid var(--g700)}
+@media(max-width:720px){.mockup-wrap{grid-template-columns:1fr;text-align:center}}
+.phone{width:min(260px,75vw);height:auto;aspect-ratio:390/844;background:var(--black);border-radius:clamp(24px,5vw,44px);overflow:hidden;position:relative;box-shadow:0 0 0 2px #222,0 0 0 4px #111,0 28px 70px rgba(0,0,0,.8);margin:0 auto}
+.p-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:80px;height:22px;background:#000;border-radius:0 0 13px 13px;z-index:10;display:flex;align-items:center;justify-content:center;gap:5px;padding-bottom:2px}
+.p-spk{width:30px;height:2.5px;background:#1c1c1c;border-radius:2px}
+.p-cam{width:7px;height:7px;background:#1c1c1c;border-radius:50%}
+.p-screen{position:absolute;inset:0;padding-top:26px;background:var(--black);display:flex;flex-direction:column}
+.p-hero{padding:12px 14px;background:var(--black)}
+.p-streak{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.p-title{font-family:var(--fd);font-size:clamp(26px,6vw,32px);font-weight:900;text-transform:uppercase;line-height:.88;margin-bottom:10px}
+.p-btn{background:var(--white);color:var(--black);border:none;width:100%;padding:10px;font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;border-radius:3px}
+.p-stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--g800);border-top:1px solid var(--g600)}
+.ps{padding:8px 10px;border-right:1px solid var(--g600)}
+.ps:last-child{border-right:none}
+.psv{font-family:var(--fd);font-size:18px;font-weight:900;line-height:1}
+.psk{font-family:var(--fd);font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--g400);margin-top:2px}
+.p-week{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:10px}
+.pw{aspect-ratio:1;background:var(--g700);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:8px;font-weight:700;color:var(--g300)}
+.pw.done{background:var(--red);color:white}
+.pw.today{outline:1.5px solid white}
+
+.stack-chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--g800);border:1px solid var(--g600);font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--g200);padding:7px 14px;border-radius:3px}
+
+.cta-sect{padding:clamp(80px,12vw,140px) clamp(20px,6vw,80px);text-align:center;position:relative;overflow:hidden}
+.cta-glow{position:absolute;inset:0;background:radial-gradient(ellipse 55% 55% at 50% 50%,rgba(232,0,45,.07) 0%,transparent 70%);pointer-events:none}
+
+footer{background:var(--g900);border-top:1px solid var(--g700);padding:clamp(22px,4vw,36px) clamp(20px,6vw,80px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.f-logo{font-family:var(--fd);font-size:22px;font-weight:900;text-transform:uppercase}
+.f-logo span{color:var(--red)}
+.f-links{display:flex;gap:20px;flex-wrap:wrap}
+.f-link{color:var(--g400);font-size:11px;font-family:var(--fd);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:color .2s}
+.f-link:hover{color:var(--white)}
+.f-copy{font-size:11px;color:var(--g500)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">FORGE<span>FIT</span></div>
+  <div class="nav-links">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#stack" class="nav-link">Stack</a>
+    <a href="/app/" class="nav-cta">SIGN IN →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">FORGE</div>
+  <div class="hero-tag">AI Personal Trainer</div>
+  <h1>FORGE<br><span>YOUR</span><br>BODY.</h1>
+  <p class="hero-sub">A private full-stack fitness app built for complete beginners. AI coaching, health tracking, personalised workouts, and smart reminders — powered by Claude AI via Puter.js. Free forever.</p>
+  <div class="hero-btns">
+    <a href="/app/" class="btn-primary">▶ OPEN APP</a>
+    <a href="https://github.com/yourusername/forgefit" target="_blank" class="btn-ghost">⭐ GITHUB</a>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div>SCROLL</div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="sc"><div class="sv">0<span>₹</span></div><div class="sk">AI Cost — Puter.js is Free</div></div>
+  <div class="sc"><div class="sv">3<span>x</span></div><div class="sk">Platforms — Phone, Desktop, Watch</div></div>
+  <div class="sc"><div class="sv">100<span>%</span></div><div class="sk">Self-Hosted &amp; Private</div></div>
+  <div class="sc"><div class="sv">1<span>cmd</span></div><div class="sk">Deploy — docker-compose up</div></div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="s-tag">What's inside</div>
+  <h2>EVERY TOOL<br>YOU <span>NEED.</span></h2>
+  <p class="s-desc">Built for someone starting from zero — no gym, no experience, no idea where to start. ForgeFit handles everything.</p>
+  <div class="feat-grid">
+    <div class="feat"><span class="feat-ico">🔐</span><div class="feat-t">Private Accounts</div><div class="feat-d">No public signup. Accounts created directly via SQL by the admin. JWT auth, 30-day sessions.</div></div>
+    <div class="feat"><span class="feat-ico">🤖</span><div class="feat-t">AI Coach</div><div class="feat-d">Claude AI via Puter.js — completely free. Knows your BMI, goal, fitness level, and Indian dietary context.</div></div>
+    <div class="feat"><span class="feat-ico">📊</span><div class="feat-t">Health Report AI</div><div class="feat-d">Upload your MovingLife / HealthSense screenshot. AI reads it, extracts metrics, builds a personalised plan.</div></div>
+    <div class="feat"><span class="feat-ico">📈</span><div class="feat-t">Progress Tracking</div><div class="feat-d">PostgreSQL-backed weight, BMI, and session logs with Chart.js graphs. Synced across all devices.</div></div>
+    <div class="feat"><span class="feat-ico">🏋️</span><div class="feat-t">Goal-Aware Workouts</div><div class="feat-d">Exercise plans adapt to your goal — fat loss, abs, muscle, recomposition. No equipment needed.</div></div>
+    <div class="feat"><span class="feat-ico">🔔</span><div class="feat-t">Smart Alarms</div><div class="feat-d">Water, meal, workout, and sleep reminders. Audio alarm, browser notification, haptic vibration, snooze.</div></div>
+    <div class="feat"><span class="feat-ico">📱</span><div class="feat-t">Samsung Health</div><div class="feat-d">Export JSON from Samsung Health and import weight + step data directly. No third-party sync needed.</div></div>
+    <div class="feat"><span class="feat-ico">⌚</span><div class="feat-t">Wear OS Layout</div><div class="feat-d">Minimal watch UI at ?watch=1. Streak, water, steps, next alarm. Tap to log workout or water.</div></div>
+  </div>
+</section>
+
+<!-- MOCKUP + HOW -->
+<div class="mockup-wrap" id="how">
+  <div>
+    <div class="s-tag">How it works</div>
+    <h2>SIMPLE.<br><span>POWERFUL.</span></h2>
+    <div class="how-grid" style="margin-top:28px">
+      <div class="how"><div class="how-n">01</div><div class="how-t">Sign in</div><div class="how-d">Log in with your account and connect your free Puter account for zero-cost AI features.</div></div>
+      <div class="how"><div class="how-n">02</div><div class="how-t">Set your profile</div><div class="how-d">Enter your details. AI recommends the best goal based on your BMI and body metrics.</div></div>
+      <div class="how"><div class="how-n">03</div><div class="how-t">Forge it daily</div><div class="how-d">Follow your plan, chat with your coach, track progress, log water and meals.</div></div>
+    </div>
+    <div style="margin-top:32px"><a href="/app/" class="btn-primary">GET STARTED →</a></div>
+  </div>
+  <div>
+    <div class="phone">
+      <div class="p-notch"><div class="p-spk"></div><div class="p-cam"></div></div>
+      <div class="p-screen">
+        <div class="p-hero">
+          <div class="p-streak">🔥 12 DAY STREAK</div>
+          <div class="p-title">TRAIN<br><span style="color:var(--red)">HARD.</span></div>
+          <button class="p-btn">▶ START WORKOUT</button>
+        </div>
+        <div class="p-stats">
+          <div class="ps"><div class="psv">47</div><div class="psk">Sessions</div></div>
+          <div class="ps"><div class="psv">22.4</div><div class="psk">BMI</div></div>
+          <div class="ps"><div class="psv">8.7k</div><div class="psk">Kcal</div></div>
+        </div>
+        <div class="p-week">
+          <div class="pw done">S</div><div class="pw done">M</div><div class="pw done">T</div>
+          <div class="pw done">W</div><div class="pw today">T</div><div class="pw">F</div><div class="pw">S</div>
+        </div>
+        <div style="padding:0 12px;background:var(--g900);border-top:1px solid var(--g700);flex:1">
+          <div style="font-family:var(--fd);font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g400);padding:8px 0 6px">TODAY'S FOCUS</div>
+          <div style="font-size:11px;color:var(--g200);line-height:1.5;border-left:2px solid var(--red);padding-left:8px">Form beats speed. One perfect rep beats ten sloppy ones.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STACK -->
+<section class="section" id="stack" style="background:var(--g900);border-top:1px solid var(--g700)">
+  <div class="s-tag">Built with</div>
+  <h2>THE <span>STACK.</span></h2>
+  <p class="s-desc" style="margin-bottom:28px">Full-stack, self-hosted, zero-cost AI. Every component chosen deliberately.</p>
+  <div class="stack-chips">
+    <div class="chip">HTML5 / CSS3 / Vanilla JS</div>
+    <div class="chip">Puter.js — Free AI</div>
+    <div class="chip">Claude Sonnet</div>
+    <div class="chip">Node.js + Express</div>
+    <div class="chip">PostgreSQL 16</div>
+    <div class="chip">Docker + Compose</div>
+    <div class="chip">Nginx</div>
+    <div class="chip">JWT Auth</div>
+    <div class="chip">Chart.js</div>
+    <div class="chip">PWA + Service Worker</div>
+    <div class="chip">Web Audio API</div>
+    <div class="chip">Samsung Health JSON</div>
+    <div class="chip">Wear OS Web</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sect">
+  <div class="cta-glow"></div>
+  <div class="s-tag">Ready to start?</div>
+  <h2 style="margin-bottom:18px">FORGE YOUR<br><span>BODY.</span></h2>
+  <p style="font-size:clamp(14px,2vw,17px);color:var(--g300);margin-bottom:36px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.65">Private access only. If you have an account, sign in and start your journey. Every rep counts.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+    <a href="/app/" class="btn-primary" style="font-size:16px;padding:20px 44px">▶ OPEN THE APP</a>
+    <a href="https://rakshitr.co.in" target="_blank" class="btn-ghost">👤 PORTFOLIO</a>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">FORGE<span>FIT</span></div>
+  <div class="f-links">
+    <a href="/app/" class="f-link">App</a>
+    <a href="https://github.com/yourusername/forgefit" target="_blank" class="f-link">GitHub</a>
+    <a href="https://rakshitr.co.in" target="_blank" class="f-link">Portfolio</a>
+    <a href="/app/?watch=1" class="f-link">Watch</a>
+  </div>
+  <div class="f-copy">Built by Rakshit Rangarajan · forgefit.rakshitr.co.in</div>
+</footer>
+
+</body>
+</html>
