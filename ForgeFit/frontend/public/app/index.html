@@ -1033,7 +1033,6 @@ async function loadAndInit() {
     alarms     = await alarmsRes.json();
     streak     = strk.streak || 0;
     totalSessions = strk.total_sessions || 0;
-    chatHistory = hist.map(m => ({ role:m.role, content:m.content }));
     
      
     showScreen('app');
