@@ -324,6 +324,13 @@ forgefit/
 - [ ] Push notifications via Web Push API
 
 ---
+<div align="center">
+
+## 🗺️ Legal & Liability Disclaimer 
+<div style="font-size: 12px; color: #666;">
+The software and code provided in this repository are provided "as is", without warranty of any kind, express or implied. The author is not responsible for any personal injury, health issues, or data loss resulting from the use of this application. Heart rate estimations and pedometer data are not intended for clinical or medical diagnostic use.
+</div>
+---
 
 ## 👤 Author
 
